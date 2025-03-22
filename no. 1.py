@@ -1,0 +1,66 @@
+from abc import ABC, abstractmethod
+import random
+
+class Hero(ABC):
+    def __init__(self, name, attack, hp):
+        self.name = name
+        self.attack = attack
+        self.hp = hp
+
+    @abstractmethod
+    def active_skill(self, enemy):
+        pass
+
+    @abstractmethod
+    def passive_skill(self):
+        pass
+
+    @abstractmethod
+    def ulti(self):
+        pass
+
+class Marksman(Hero):
+    def __init__(self, name, attack, hp):
+        super().__init__(name, attack, hp)
+
+    def active_skill(self, enemy):
+        critical = self.passive_skill()
+        damage = int(self.attack * critical)
+        enemy.hp -= damage
+        print(f"{self.name} deals {damage} damage to {enemy.name}")
+        print(f"{enemy.name} HP remains {enemy.hp}")
+
+    def passive_skill(self):
+        return 1.0 + random.random()  # Critical multiplier between 1.0 - 2.0
+
+    def ulti(self):
+        print(f"{self.name} uses Ulti! (Not Implemented)")
+
+class Tank(Hero):
+    def __init__(self, name, attack, hp):
+        super().__init__(name, attack, hp)
+        self.max_hp = hp  # Menyimpan HP maksimum
+
+    def active_skill(self, enemy):
+        heal = int(self.passive_skill() * self.hp)
+        self.hp = min(self.hp + heal, self.max_hp)  # HP tidak boleh melebihi batas
+        enemy.hp -= self.attack
+        print(f"{self.name} heals {heal}, current HP {self.hp}")
+        print(f"{self.name} deals {self.attack} damage to {enemy.name}")
+        print(f"{enemy.name} HP remains {enemy.hp}")
+
+    def passive_skill(self):
+        return random.random() * 0.3  # Heal multiplier between 0.0 - 0.3
+
+    def ulti(self):
+        print(f"{self.name} uses Ulti! (Not Implemented)")
+
+# Inisialisasi karakter
+balmond = Tank("Balmond", 100, 2500)
+layla = Marksman("Layla", 210, 1600)
+
+# Simulasi pertarungan
+print("=== Turn 1 ===")
+layla.active_skill(balmond)
+print("=== Turn 2 ===")
+balmond.active_skill(layla)
