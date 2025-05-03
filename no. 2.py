@@ -1,39 +1,56 @@
 from abc import ABC, abstractmethod
 
-# 1. Buat kelas abstrak (tidak bisa langsung digunakan)
-class Hero(ABC):
-    def __init__(self, name, attack, hp):
-        self.name = name
-        self.attack = attack
-        self.hp = hp
-
+class Section(ABC):
     @abstractmethod
-    def active_skill(self):
+    def describe(self):
         pass
 
-    @abstractmethod
-    def passive_skill(self):
-        pass
+class PersonalSection(Section):
+    def describe(self):
+        print("Personal Section")
+
+class AlbumSection(Section):
+    def describe(self):
+        print("Album Section")
+
+class PatentSection(Section):
+    def describe(self):
+        print("Patent Section")
+
+class PublicationSection(Section):
+    def describe(self):
+        print("Publication Section")
+
+# Kelas Factory
+class Profile(ABC):
+    def __init__(self):
+        self.sections = []
+        self.createProfile()
 
     @abstractmethod
-    def ulti(self):
+    def createProfile(self):
         pass
 
-# 2. Buat subclass yang mengimplementasikan semua metode abstrak
-class Marksman(Hero):
-    def active_skill(self):
-        print(f"{self.name} menyerang dengan serangan jarak jauh!")
+    def getSections(self):
+        return self.sections
 
-    def passive_skill(self):
-        print(f"{self.name} mendapatkan efek critical damage!")
+    def addSections(self, section):
+        self.sections.append(section)
 
-    def ulti(self):
-        print(f"{self.name} mengeluarkan tembakan mematikan!")
+class linkedin(Profile):
+    def createProfile(self):
+        self.addSections(PersonalSection())
+        self.addSections(PatentSection())
+        self.addSections(PublicationSection())
 
-# 3. Buat objek dari subclass
-layla = Marksman("Layla", 210, 1600)
+class facebook(Profile):
+    def createProfile(self):
+        self.addSections(PersonalSection())
+        self.addSections(AlbumSection())
 
-# 4. Gunakan objek tersebut
-layla.active_skill()
-layla.passive_skill()
-layla.ulti()
+profile_type = input("Profil apa yang ingin anda buat? [Linkedin atau Facebook] ") 
+profile = eval(profile_type.lower())() 
+print(f"Profil {type(profile).__name__} sedang dibuat..") 
+print("Profil mempunyai Section:") 
+for section in profile.getSections(): 
+    section.describe() 

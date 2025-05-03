@@ -1,66 +1,28 @@
-from abc import ABC, abstractmethod
-import random
+class Sim_Cache:
+    def __new__(cls):
+        if not hasattr(cls, 'cache'):
+            cls.cache = super().__new__(cls)
+        return cls.cache
+    def __init__(self):
+        self.nama_web = "PBOTRI"
+        self.create_chace()
 
-class Hero(ABC):
-    def __init__(self, name, attack, hp):
-        self.name = name
-        self.attack = attack
-        self.hp = hp
+    def create_chace(self):
+        self.cache_source = self.nama_web + ".txt"
+        self.cache_file_name = "cache_" + self.nama_web + ".txt"
+        sf = open(self.cache_source, "r") #buka source file
+        cf = open(self.cache_file_name, "w") #buat file cache baru
+        cf.write(f"Ini adalah file cache dari web {self.nama_web}\n")
+        line1 = False
+        for l in sf:
+            if "Start_cache" in l: #menentukan baris awal cache
+                line1 = True
+            if line1 == True:
+                cf.write(l) #menyalin cache dari source
 
-    @abstractmethod
-    def active_skill(self, enemy):
-        pass
-
-    @abstractmethod
-    def passive_skill(self):
-        pass
-
-    @abstractmethod
-    def ulti(self):
-        pass
-
-class Marksman(Hero):
-    def __init__(self, name, attack, hp):
-        super().__init__(name, attack, hp)
-
-    def active_skill(self, enemy):
-        critical = self.passive_skill()
-        damage = int(self.attack * critical)
-        enemy.hp -= damage
-        print(f"{self.name} deals {damage} damage to {enemy.name}")
-        print(f"{enemy.name} HP remains {enemy.hp}")
-
-    def passive_skill(self):
-        return 1.0 + random.random()  # Critical multiplier between 1.0 - 2.0
-
-    def ulti(self):
-        print(f"{self.name} uses Ulti! (Not Implemented)")
-
-class Tank(Hero):
-    def __init__(self, name, attack, hp):
-        super().__init__(name, attack, hp)
-        self.max_hp = hp  # Menyimpan HP maksimum
-
-    def active_skill(self, enemy):
-        heal = int(self.passive_skill() * self.hp)
-        self.hp = min(self.hp + heal, self.max_hp)  # HP tidak boleh melebihi batas
-        enemy.hp -= self.attack
-        print(f"{self.name} heals {heal}, current HP {self.hp}")
-        print(f"{self.name} deals {self.attack} damage to {enemy.name}")
-        print(f"{enemy.name} HP remains {enemy.hp}")
-
-    def passive_skill(self):
-        return random.random() * 0.3  # Heal multiplier between 0.0 - 0.3
-
-    def ulti(self):
-        print(f"{self.name} uses Ulti! (Not Implemented)")
-
-# Inisialisasi karakter
-balmond = Tank("Balmond", 100, 2500)
-layla = Marksman("Layla", 210, 1600)
-
-# Simulasi pertarungan
-print("=== Turn 1 ===")
-layla.active_skill(balmond)
-print("=== Turn 2 ===")
-balmond.active_skill(layla)
+    def get_cache(self):
+        if not self.cache:
+            self.cache = Sim_Cache()
+        print(f"Nama file cache adalah {self.cache_file_name}")
+        cf = open(self.cache_file_name, "r")
+        print(cf.read())
